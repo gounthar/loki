@@ -1,0 +1,35 @@
+name: Alt Arch Riscv64 (BananaPi F3)
+
+on:
+  push:
+    branches:
+      - feat/riscv64-bananapi-f3
+  pull_request:
+    branches:
+      - feat/riscv64-ci
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Loki (riscv64, BananaPi F3)
+    runs-on: [self-hosted, linux, riscv64, bananapi-f3]
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: false
+
+      - name: Build
+        run: |
+          go version
+          uname -m
+          time go build -v ./cmd/loki/
+
+      - name: Verify
+        run: |
+          ./loki --version
+          file ./loki
